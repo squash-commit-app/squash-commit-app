@@ -97,30 +97,30 @@ module.exports = (app: Probot): void => {
 
         if (prNumCommits > 1) {
           context.log.info("not a single commit PR");
-          return;
-        } else {
-          const commit = await getCommit(
-            context,
-            prHeadSha,
-            pullRequestInfo.owner,
-            pullRequestInfo.repo
-          );
-
-          const empty = await createEmptyCommit(
-            context,
-            commit,
-            pullRequestInfo.owner,
-            pullRequestInfo.repo
-          );
-
-          return updateRef(
-            context,
-            empty.sha,
-            prBranchName,
-            pullRequestInfo.owner,
-            pullRequestInfo.repo
-          );
+          return "not a single commit PR";
         }
+
+        const commit = await getCommit(
+          context,
+          prHeadSha,
+          pullRequestInfo.owner,
+          pullRequestInfo.repo
+        );
+
+        const empty = await createEmptyCommit(
+          context,
+          commit,
+          pullRequestInfo.owner,
+          pullRequestInfo.repo
+        );
+
+        return updateRef(
+          context,
+          empty.sha,
+          prBranchName,
+          pullRequestInfo.owner,
+          pullRequestInfo.repo
+        );
       } catch (e) {
         context.log.error(e);
         throw e;
