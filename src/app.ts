@@ -11,14 +11,17 @@ const getPRInfo = async (
   { owner, repo, pull_number }: PullRequestInfo
 ) => {
   const {
-    data: { commits, head },
+    data: {
+      commits,
+      head: { sha, ref },
+    },
   } = await context.octokit.pulls.get({
     owner,
     repo,
     pull_number,
   });
 
-  return { prNumCommits: commits, prHeadSha: head.sha, prBranchName: head.ref };
+  return { commits, sha, ref };
 };
 
 async function getCommit(
@@ -90,19 +93,16 @@ module.exports = (app: Probot): void => {
       };
 
       try {
-        const { prNumCommits, prHeadSha, prBranchName } = await getPRInfo(
-          context,
-          pullRequestInfo
-        );
+        const { commits, sha, ref } = await getPRInfo(context, pullRequestInfo);
 
-        if (prNumCommits > 1) {
+        if (commits > 1) {
           context.log.info("not a single commit PR");
           return "not a single commit PR";
         }
 
         const commit = await getCommit(
           context,
-          prHeadSha,
+          sha,
           pullRequestInfo.owner,
           pullRequestInfo.repo
         );
@@ -117,7 +117,7 @@ module.exports = (app: Probot): void => {
         return updateRef(
           context,
           empty.sha,
-          prBranchName,
+          ref,
           pullRequestInfo.owner,
           pullRequestInfo.repo
         );
