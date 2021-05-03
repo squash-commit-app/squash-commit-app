@@ -1,90 +1,128 @@
-import { Probot, Context } from 'probot';
+import { Probot, Context } from "probot";
 
 interface PullRequestInfo {
-  owner: string
-  repo: string
-  pull_number: number
+  owner: string;
+  repo: string;
+  pull_number: number;
 }
 
-const getPRInfo = async (context: Context, {
-  owner, repo, pull_number
-}: PullRequestInfo) => {
+const getPRInfo = async (
+  context: Context,
+  { owner, repo, pull_number }: PullRequestInfo
+) => {
   const {
-      data: {
-        commits,
-        head
-      }
-    } = await context.octokit.pulls.get({
-      owner, repo, pull_number
-    });
-  
-  return { prNumCommits: commits, prHeadSha: head.sha, prBranchName: head.ref }
-}
-
-const createEmptyCommit = async (
-  context: Context,
-  {
+    data: { commits, head },
+  } = await context.octokit.pulls.get({
     owner,
     repo,
-    prHeadSha
-  }: PullRequestInfo & { prHeadSha: string }
-) => {
-  const { data: { sha } } = await context.octokit.git.createCommit({
-        owner,
-        repo,
-        message: 'empty commit',
-        tree: '', //TODO To check how to get the SHA of the tree object this commit points to
-        parent: prHeadSha
-  })
-  
-  return sha
-}
+    pull_number,
+  });
 
-const pushCommitToBranch = (
+  return { prNumCommits: commits, prHeadSha: head.sha, prBranchName: head.ref };
+};
+
+async function getCommit(
   context: Context,
-  {
+  sha: string,
+  owner: string,
+  repo: string
+): Promise<any> {
+  const commit = await context.octokit.git.getCommit({
     owner,
     repo,
-    branchName,
-    commitSha
-  }: PullRequestInfo & { branchName: string, commitSha: string},
-) => {
-  return context.octokit.git.createRef({
-        owner,
-        repo,
-        ref: branchName,
-        sha: commitSha
-      })
+    // eslint-disable-next-line @typescript-eslint/camelcase
+    commit_sha: sha,
+  });
+  return commit.data;
+}
+
+async function createEmptyCommit(
+  context: Context,
+  refCommit: any,
+  owner: string,
+  repo: string
+): Promise<any> {
+  context.log.info("Creating empty commit");
+  const commit = await context.octokit.git.createCommit({
+    owner,
+    repo,
+    message: "empty commit",
+    tree: refCommit.tree.sha,
+    parents: [refCommit.sha],
+  });
+  return commit.data;
+}
+
+async function updateRef(
+  context: Context,
+  sha: string,
+  branch: string,
+  owner: string,
+  repo: string
+): Promise<any> {
+  context.log.info(`Changing ref for ${branch} to`, sha);
+  const ref = await context.octokit.git.updateRef({
+    owner,
+    repo,
+    ref: `heads/${branch}`,
+    sha,
+  });
+  return ref.data;
 }
 
 module.exports = (app: Probot): void => {
   app.log("Yay! The app was loaded!");
 
-  //TODO pull_request.opened should be an event too?
-  app.on("pull_request.edited", async (context) => {
-    const { pullRequest } = context
+  app.on(
+    ["pull_request.opened", "pull_request.synchronize"],
+    async (context) => {
+      context.log.debug("PR edited!");
+      const {
+        payload: { pull_request, repository },
+      } = context;
 
-    const pullRequestInfo = pullRequest();
+      const pullRequestInfo = {
+        owner: repository.owner.login,
+        repo: repository.name,
+        pull_number: pull_request.number,
+      };
 
-    const {
-      prNumCommits,
-      prHeadSha,
-      prBranchName
-    } = await getPRInfo(context, pullRequestInfo)
+      try {
+        const { prNumCommits, prHeadSha, prBranchName } = await getPRInfo(
+          context,
+          pullRequestInfo
+        );
 
-    if (prNumCommits === 1) {
-      const emptyCommitSha = await createEmptyCommit(context, {
-        ...pullRequestInfo,
-        prHeadSha
-      })
+        if (prNumCommits > 1) {
+          context.log.info("not a single commit PR");
+          return;
+        } else {
+          const commit = await getCommit(
+            context,
+            prHeadSha,
+            pullRequestInfo.owner,
+            pullRequestInfo.repo
+          );
 
-      return pushCommitToBranch(context, {
-        ...pullRequestInfo,
-        branchName: prBranchName,
-        commitSha: emptyCommitSha
-      })
+          const empty = await createEmptyCommit(
+            context,
+            commit,
+            pullRequestInfo.owner,
+            pullRequestInfo.repo
+          );
+
+          return updateRef(
+            context,
+            empty.sha,
+            prBranchName,
+            pullRequestInfo.owner,
+            pullRequestInfo.repo
+          );
+        }
+      } catch (e) {
+        context.log.error(e);
+        throw e;
+      }
     }
-
-    return 'not a single commit PR';
-  });
+  );
 };
