@@ -78,7 +78,7 @@ module.exports = (app: Probot): void => {
   app.on(
     ["pull_request.opened", "pull_request.synchronize"],
     async (context) => {
-      context.log.debug("PR edited!");
+      context.log.debug("PR Opened or PR Synchronized!");
       const {
         payload: { pull_request, repository },
       } = context;
