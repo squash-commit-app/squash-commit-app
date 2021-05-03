@@ -46,7 +46,9 @@ async function createEmptyCommit(
   const commit = await context.octokit.git.createCommit({
     owner,
     repo,
-    message: "empty commit",
+    message: `empty commit to preset the squash & merge commit subject from the pull request title
+
+Created by https://github.com/gr2m/squash-commit-app`,
     tree: refCommit.tree.sha,
     parents: [refCommit.sha],
   });
