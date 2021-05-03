@@ -4,7 +4,7 @@
   "private": true,
   "description": "Probot & Google Cloud Functions example",
   "scripts": {
-    "start": "probot run ./app.js",
+    "start": "npm run build; probot run ./dist/app.js",
     "build": "tsc",
     "test": "node test.js"
   },
@@ -15,6 +15,7 @@
     "probot": "^11.0.5"
   },
   "devDependencies": {
+    "typescript": "^4.2.4",
     "@tsconfig/node14": "^1.0.0",
     "smee-client": "^1.2.2"
   },
