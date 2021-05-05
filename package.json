@@ -2,7 +2,7 @@
   "name": "squash-commit-app",
   "version": "1.0.0",
   "private": true,
-  "description": "Probot & Google Cloud Functions example",
+  "description": "GitHub App which adds an empty commit to an open pull request with a single commit when the title was changed",
   "scripts": {
     "start": "npm run build; probot run ./dist/app.js",
     "build": "tsc",
