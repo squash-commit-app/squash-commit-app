@@ -99,7 +99,7 @@ module.exports = (app: Probot): void => {
 
         if (commits > 1) {
           context.log.info("not a single commit PR");
-          return "not a single commit PR";
+          return;
         }
 
         const commit = await getCommit(
