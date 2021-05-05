@@ -79,7 +79,7 @@ Created by https://github.com/gr2m/squash-commit-app`,
   return updateRef(context, commit.data.sha, ref, owner, repo);
 }
 
-module.exports = (app: Probot): void => {
+const probotFunc = (app: Probot): void => {
   app.log("Yay! The app was loaded!");
 
   app.on(
@@ -129,3 +129,5 @@ module.exports = (app: Probot): void => {
     }
   );
 };
+
+export default probotFunc;
