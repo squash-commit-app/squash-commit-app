@@ -41,11 +41,29 @@ async function getCommit(
   return commit.data;
 }
 
+async function updateRef(
+  context: Context,
+  sha: string,
+  branch: string,
+  owner: string,
+  repo: string
+): Promise<any> {
+  context.log.info(`Changing ref for ${branch} to`, sha);
+
+  return context.octokit.git.updateRef({
+    owner,
+    repo,
+    ref: `heads/${branch}`,
+    sha,
+  });
+}
+
 async function createEmptyCommit(
   context: Context,
   refCommit: any,
   owner: string,
-  repo: string
+  repo: string,
+  ref: string
 ): Promise<any> {
   context.log.info("Creating empty commit");
   const commit = await context.octokit.git.createCommit({
@@ -57,24 +75,8 @@ Created by https://github.com/gr2m/squash-commit-app`,
     tree: refCommit.tree.sha,
     parents: [refCommit.sha],
   });
-  return commit.data;
-}
 
-async function updateRef(
-  context: Context,
-  sha: string,
-  branch: string,
-  owner: string,
-  repo: string
-): Promise<any> {
-  context.log.info(`Changing ref for ${branch} to`, sha);
-  const ref = await context.octokit.git.updateRef({
-    owner,
-    repo,
-    ref: `heads/${branch}`,
-    sha,
-  });
-  return ref.data;
+  return updateRef(context, commit.data.sha, ref, owner, repo);
 }
 
 module.exports = (app: Probot): void => {
@@ -109,19 +111,12 @@ module.exports = (app: Probot): void => {
           pullRequestInfo.repo
         );
 
-        const empty = await createEmptyCommit(
+        return createEmptyCommit(
           context,
           commit,
           pullRequestInfo.owner,
-          pullRequestInfo.repo
-        );
-
-        return updateRef(
-          context,
-          empty.sha,
-          ref,
-          pullRequestInfo.owner,
-          pullRequestInfo.repo
+          pullRequestInfo.repo,
+          ref
         );
       } catch (e) {
         context.log.error(e);
