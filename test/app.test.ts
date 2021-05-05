@@ -36,7 +36,7 @@ const treeSha = "691272480426f78a0138979dd3ce63b77f706feb";
 const emptyCommitSha = "7638417db6d59f3c431d3e1f261cc637155684cd";
 const ref = `heads%2F${branchName}`;
 
-["opened", "reopened", "synchronize"].forEach((prEvent) => {
+["opened", "reopened", "synchronize", "edited"].forEach((prEvent) => {
   testPRSingleCommit(
     `recieves pull_request.${prEvent} event`,
     async function () {
@@ -109,7 +109,7 @@ testPRSingleCommit.run();
 
 const testPRWithMultipleCommits = suite("with Multiple Commits");
 
-["opened", "reopened", "synchronize"].forEach((prEvent) => {
+["opened", "reopened", "synchronize", "edited"].forEach((prEvent) => {
   testPRWithMultipleCommits(
     `recieves pull_request.${prEvent} event`,
     async function () {
