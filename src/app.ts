@@ -83,7 +83,11 @@ module.exports = (app: Probot): void => {
   app.log("Yay! The app was loaded!");
 
   app.on(
-    ["pull_request.opened", "pull_request.synchronize"],
+    [
+      "pull_request.opened",
+      "pull_request.reopened",
+      "pull_request.synchronize",
+    ],
     async (context) => {
       context.log.debug("PR Opened or PR Synchronized!");
       const {
