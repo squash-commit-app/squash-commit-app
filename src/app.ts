@@ -10,6 +10,7 @@ const getPRInfo = async (
   context: Context,
   { owner, repo, pull_number }: PullRequestInfo
 ) => {
+  context.log.info(`Getting PR info from ${owner}/${repo}/pull/${pull_number}`);
   const {
     data: {
       commits,
@@ -30,6 +31,7 @@ async function getCommit(
   owner: string,
   repo: string
 ): Promise<any> {
+  context.log.info(`Getting commit info from ${sha}`);
   const commit = await context.octokit.git.getCommit({
     owner,
     repo,
