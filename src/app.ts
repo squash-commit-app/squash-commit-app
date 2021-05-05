@@ -87,6 +87,7 @@ const probotFunc = (app: Probot): void => {
       "pull_request.opened",
       "pull_request.reopened",
       "pull_request.synchronize",
+      "pull_request.edited",
     ],
     async (context) => {
       context.log.debug("PR Opened or PR Synchronized!");
