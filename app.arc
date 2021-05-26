@@ -4,6 +4,7 @@ begin-app
 @static
 
 @http
+post /api/github/webhooks
 
 @tables
 data

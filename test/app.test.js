@@ -1,15 +1,15 @@
 import { suite } from "uvu";
-import assert from "uvu/assert";
+import { equal } from "uvu/assert";
 
 import nock from "nock";
 nock.disableNetConnect();
 
 import { Probot, ProbotOctokit } from "probot";
 
-import app from "../src/app";
+import app from "../app.js";
 
 /** @type {import('probot').Probot */
-let probot: Probot;
+let probot;
 const testPRSingleCommit = suite("with Single Commit");
 
 testPRSingleCommit.before.each(() => {
@@ -59,7 +59,7 @@ const ref = `heads%2F${branchName}`;
           },
         })
         .post(`/repos/${owner}/${repo}/git/commits`, (requestBody) => {
-          assert.equal(requestBody, {
+          equal(requestBody, {
             message: `empty commit to preset the squash & merge commit subject from the pull request title
 
 Created by https://github.com/gr2m/squash-commit-app`,
@@ -73,7 +73,7 @@ Created by https://github.com/gr2m/squash-commit-app`,
           sha: emptyCommitSha,
         })
         .patch(`/repos/${owner}/${repo}/git/refs/${ref}`, (requestBody) => {
-          assert.equal(requestBody, {
+          equal(requestBody, {
             sha: emptyCommitSha,
           });
 
@@ -98,7 +98,7 @@ Created by https://github.com/gr2m/squash-commit-app`,
         },
       });
 
-      assert.equal(mock.activeMocks(), []);
+      equal(mock.activeMocks(), []);
     }
   );
 });
@@ -142,7 +142,7 @@ const testPRWithMultipleCommits = suite("with Multiple Commits");
         },
       });
 
-      assert.equal(mock.activeMocks(), []);
+      equal(mock.activeMocks(), []);
     }
   );
 });
