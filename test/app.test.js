@@ -1,12 +1,12 @@
-import { suite } from "uvu";
-import { equal } from "uvu/assert";
+const { suite } = require("uvu");
+const { equal } = require("uvu/assert");
 
-import nock from "nock";
+const nock = require("nock");
 nock.disableNetConnect();
 
-import { Probot, ProbotOctokit } from "probot";
+const { Probot, ProbotOctokit } = require("probot");
 
-import app from "../app.js";
+const app = require("../app.js");
 
 /** @type {import('probot').Probot */
 let probot;

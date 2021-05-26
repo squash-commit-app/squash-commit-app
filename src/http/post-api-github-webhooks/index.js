@@ -1,13 +1,13 @@
-import arc from "@architect/functions";
-import { createProbot } from "probot";
+const arc = require("@architect/functions");
+const { createProbot } = require("probot");
 
-import app from "../../../app.js";
+const app = require("../../../app.js");
 
 const probot = createProbot();
 
 probot.load(app);
 
-export async function handler(req) {
+module.exports.handler = async function handler(req) {
   const signature =
     req.headers["x-hub-signature-256"] ||
     req.headers["X-Hub-Signature-256"] ||
@@ -35,4 +35,4 @@ export async function handler(req) {
       body: error.message,
     };
   }
-}
+};

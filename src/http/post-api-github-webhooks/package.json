@@ -1,5 +1,6 @@
 {
   "name": "http-post-api-github-webhooks",
+  "type": "commonjs",
   "dependencies": {
     "@architect/functions": "^3.13.9",
     "probot": "^11.0.6"

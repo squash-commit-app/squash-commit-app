@@ -2,11 +2,11 @@
   "name": "squash-commit-app",
   "version": "1.0.0",
   "private": true,
-  "type": "module",
+  "type": "commonjs",
   "description": "GitHub App which adds an empty commit to an open pull request with a single commit when the title was changed",
   "scripts": {
     "start": "npx sandbox",
-    "test": "node test.js"
+    "test": "node test/app.test.js"
   },
   "author": "Gregor Martynus (https://twitter.com/gr2m)",
   "license": "ISC",

@@ -1,7 +1,7 @@
 /**
  * @param {import("probot").Probot} app
  */
-export default function (app) {
+module.exports = (app) => {
   app.log("Yay! The app was loaded!");
 
   app.on(
@@ -51,7 +51,7 @@ export default function (app) {
       }
     }
   );
-}
+};
 
 async function getPRInfo(context, { owner, repo, pull_number }) {
   context.log.info(`Getting PR info from ${owner}/${repo}/pull/${pull_number}`);
