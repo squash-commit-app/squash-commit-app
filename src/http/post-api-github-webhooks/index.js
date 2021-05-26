@@ -7,7 +7,7 @@ const probot = createProbot();
 
 probot.load(app);
 
-exports.handler = async function post(req) {
+export async function handler(req) {
   const signature =
     req.headers["x-hub-signature-256"] ||
     req.headers["X-Hub-Signature-256"] ||
@@ -35,4 +35,4 @@ exports.handler = async function post(req) {
       body: error.message,
     };
   }
-};
+}
