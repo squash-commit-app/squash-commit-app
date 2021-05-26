@@ -62,7 +62,7 @@ const ref = `heads%2F${branchName}`;
           equal(requestBody, {
             message: `empty commit to preset the squash & merge commit subject from the pull request title
 
-Created by https://github.com/gr2m/squash-commit-app`,
+Learn more at https://github.com/squash-commit-app/squash-commit-app`,
             tree: treeSha,
             parents: [commitSha],
           });

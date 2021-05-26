@@ -98,7 +98,7 @@ async function createEmptyCommit(context, refCommit, owner, repo, ref) {
     repo,
     message: `empty commit to preset the squash & merge commit subject from the pull request title
 
-Created by https://github.com/gr2m/squash-commit-app`,
+Learn more at https://github.com/squash-commit-app/squash-commit-app`,
     tree: refCommit.tree.sha,
     parents: [refCommit.sha],
   });
