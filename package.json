@@ -10,7 +10,7 @@
   },
   "author": "Gregor Martynus (https://twitter.com/gr2m)",
   "license": "ISC",
-  "repository": "https://github.com/squash-commit-app/squash-commit-app",
+  "repository": "github:squash-commit-app/squash-commit-app",
   "dependencies": {
     "probot": "^11.0.5"
   },
