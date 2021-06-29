@@ -4,14 +4,7 @@
 module.exports = (app) => {
   app.log("Yay! The app was loaded!");
 
-  app.on(
-    [
-      "pull_request.opened",
-      "pull_request.reopened",
-      "pull_request.synchronize",
-      "pull_request.edited",
-    ],
-    async (context) => {
+  app.on("pull_request.edited", async (context) => {
       context.log.debug("PR Opened or PR Synchronized!");
       const {
         payload: { pull_request, repository },
